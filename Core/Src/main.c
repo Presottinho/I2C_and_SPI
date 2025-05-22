@@ -116,7 +116,7 @@ int main(void)
     /* USER CODE END WHILE */
 
 	  mpu6050_read();
-	  HAL_Delay(500);
+	  HAL_Delay(250);
 	  LCD_Clear();
 
     /* USER CODE BEGIN 3 */
