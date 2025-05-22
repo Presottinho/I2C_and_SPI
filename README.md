@@ -1,0 +1,1 @@
+Trabalho proposto pelo Professor Marcos Zuccolotto de Sistemas Microprocessados II. O objetivo era utilizar um sensor I2C e mostrar os valores captados por este sensor em um display. Neste trabalho foi utilizado um sensor Giroscópio de 3 eixos(MPU6050) e o display Nokia 5110;
