@@ -19,8 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "mpu6050.h"
-#include <stdio.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -47,6 +45,8 @@ I2C_HandleTypeDef hi2c1;
 
 SPI_HandleTypeDef hspi1;
 
+TIM_HandleTypeDef htim12;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -59,6 +59,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM12_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -100,12 +101,16 @@ int main(void)
   MX_USART2_UART_Init();
   MX_I2C1_Init();
   MX_SPI1_Init();
+  MX_TIM12_Init();
+  /* USER CODE BEGIN 2 */
+
   LCD_Init();
   LCD_Clear();
   LCD_SetCursor(0, 0);
-  /* USER CODE BEGIN 2 */
 
   mpu6050_init();
+
+  HAL_TIM_PWM_Start(&htim12, TIM_CHANNEL_1);
 
   /* USER CODE END 2 */
 
@@ -113,11 +118,64 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+	 int xPos;
+	 int ARR;
+	 xPos = mpu6050_read();
 
-	  mpu6050_read();
-	  HAL_Delay(250);
-	  LCD_Clear();
+	 if(xPos < -6600){
+		 htim12.Instance->ARR = 64;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 64;
+	 }else if(xPos >= -6599 && xPos <= -5200){
+		 htim12.Instance->ARR = 61;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 61;
+	 }else if(xPos >= -5199 && xPos <= -3800){
+		 htim12.Instance->ARR = 57;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 57;
+	 }else if(xPos >= -3799 && xPos <= -2400){
+		 htim12.Instance->ARR = 54;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 54;
+	 }else if(xPos >= -2399 && xPos <= -1000){
+		 htim12.Instance->ARR = 51;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 51;
+	 }else if(xPos >= -999 && xPos <= 400){
+		 htim12.Instance->ARR = 48;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 48;
+	 }else if(xPos >= 401 && xPos <= 1800){
+		 htim12.Instance->ARR = 45;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 45;
+	 }else if(xPos >= 1801 && xPos <= 3200){
+		 htim12.Instance->ARR = 43;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 43;
+	 }else if(xPos >= 3201 && xPos <= 4600){
+		 htim12.Instance->ARR = 40;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 40;
+	 }else if(xPos >= 4601 && xPos <= 6000){
+		 htim12.Instance->ARR = 38;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 38;
+	 }else if(xPos >= 6001 && xPos <= 7400){
+		 htim12.Instance->ARR = 36;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 36;
+	 }else if(xPos > 7400){
+		 htim12.Instance->ARR = 34;
+		 htim12.Instance->CCR1 = 1;
+		 ARR = 34;
+	 }
+
+	 HAL_Delay(250);
+	 LCD_Clear();
+
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -240,6 +298,48 @@ static void MX_SPI1_Init(void)
   /* USER CODE BEGIN SPI1_Init 2 */
 
   /* USER CODE END SPI1_Init 2 */
+
+}
+
+/**
+  * @brief TIM12 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM12_Init(void)
+{
+
+  /* USER CODE BEGIN TIM12_Init 0 */
+
+  /* USER CODE END TIM12_Init 0 */
+
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM12_Init 1 */
+
+  /* USER CODE END TIM12_Init 1 */
+  htim12.Instance = TIM12;
+  htim12.Init.Prescaler = 9999;
+  htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim12.Init.Period = 1;
+  htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim12, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM12_Init 2 */
+
+  /* USER CODE END TIM12_Init 2 */
+  HAL_TIM_MspPostInit(&htim12);
 
 }
 

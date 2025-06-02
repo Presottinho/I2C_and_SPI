@@ -67,7 +67,7 @@ void mpu6050_init(){
 
 }
 
-void mpu6050_read(){
+int mpu6050_read(){
 
 	uint8_t dataX[2];
 	int16_t xAcc;
@@ -81,20 +81,13 @@ void mpu6050_read(){
 
 	yAcc = ((int16_t)dataY[0] << 8) + dataY[1] - 120;
 
-	uint8_t dataZ[2];
-	int16_t zAcc;
-	HAL_I2C_Mem_Read(&hi2c1, (DEVICE_ADRESS << 1) + 1, 63, 1, dataZ, 2, 100);
-
-	zAcc = ((int16_t)dataZ[0] << 8) + dataZ[1] - 7120;
-
 	char buffer[20];
 	sprintf(buffer, "Eixo X: %d;", xAcc);
 	LCD_WriteString(buffer);
 	sprintf(buffer, "Eixo Y: %d;", yAcc);
 	LCD_SetCursor(0, 2);
 	LCD_WriteString(buffer);
-	sprintf(buffer, "Eixo Z: %d;", zAcc);
-	LCD_SetCursor(0, 4);
-	LCD_WriteString(buffer);
+
+	return xAcc;
 
 }
