@@ -118,60 +118,109 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	 int xPos;
-	 int ARR;
-	 xPos = mpu6050_read();
 
-	 if(xPos < -6600){
-		 htim12.Instance->ARR = 64;
+	  uint32_t psc = TIM12->PSC;
+	  uint32_t arr = TIM12->ARR;
+
+	 int yPos;
+	 int xPos;
+	 int16_t PSC;
+	 mpu6050_read(&yPos, &xPos);
+
+	 if(yPos < -6600){
+		 PSC = 64;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 64;
-	 }else if(xPos >= -6599 && xPos <= -5200){
-		 htim12.Instance->ARR = 61;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: C");
+	 }else if(yPos >= -6599 && yPos <= -5200){
+		 PSC = 61;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 61;
-	 }else if(xPos >= -5199 && xPos <= -3800){
-		 htim12.Instance->ARR = 57;
+		 LCD_SetCursor(17,2);
+		 LCD_WriteString("Nota: C#");
+	 }else if(yPos >= -5199 && yPos <= -3800){
+		 PSC = 57;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 57;
-	 }else if(xPos >= -3799 && xPos <= -2400){
-		 htim12.Instance->ARR = 54;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: D");
+	 }else if(yPos >= -3799 && yPos <= -2400){
+		 PSC = 54;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 54;
-	 }else if(xPos >= -2399 && xPos <= -1000){
-		 htim12.Instance->ARR = 51;
+		 LCD_SetCursor(17,2);
+		 LCD_WriteString("Nota: D#");
+	 }else if(yPos >= -2399 && yPos <= -1000){
+		 PSC = 51;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 51;
-	 }else if(xPos >= -999 && xPos <= 400){
-		 htim12.Instance->ARR = 48;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: E");
+	 }else if(yPos >= -999 && yPos <= 400){
+		 PSC = 48;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 48;
-	 }else if(xPos >= 401 && xPos <= 1800){
-		 htim12.Instance->ARR = 45;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: F");
+	 }else if(yPos >= 401 && yPos <= 1800){
+		 PSC = 45;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 45;
-	 }else if(xPos >= 1801 && xPos <= 3200){
-		 htim12.Instance->ARR = 43;
+		 LCD_SetCursor(17,2);
+		 LCD_WriteString("Nota: F#");
+	 }else if(yPos >= 1801 && yPos <= 3200){
+		 PSC = 43;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 43;
-	 }else if(xPos >= 3201 && xPos <= 4600){
-		 htim12.Instance->ARR = 40;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: G");
+	 }else if(yPos >= 3201 && yPos <= 4600){
+		 PSC = 40;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 40;
-	 }else if(xPos >= 4601 && xPos <= 6000){
-		 htim12.Instance->ARR = 38;
+		 LCD_SetCursor(17,2);
+		 LCD_WriteString("Nota: G#");
+	 }else if(yPos >= 4601 && yPos <= 6000){
+		 PSC = 38;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 38;
-	 }else if(xPos >= 6001 && xPos <= 7400){
-		 htim12.Instance->ARR = 36;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: A");
+	 }else if(yPos >= 6001 && yPos <= 7400){
+		 PSC = 36;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 36;
-	 }else if(xPos > 7400){
-		 htim12.Instance->ARR = 34;
+		 LCD_SetCursor(17,2);
+		 LCD_WriteString("Nota: A#");
+	 }else if(yPos > 7400){
+		 PSC = 34;
+		 htim12.Instance->PSC = PSC;
 		 htim12.Instance->CCR1 = 1;
-		 ARR = 34;
+		 LCD_SetCursor(18,2);
+		 LCD_WriteString("Nota: B");
 	 }
 
+	 if(xPos >= 700){
+		 PSC = PSC * 2;
+		 htim12.Instance->PSC = PSC;
+		 LCD_SetCursor(15,3);
+		 LCD_WriteString("Oitava: 3");
+	 }else if(xPos <= -700){
+		 PSC = PSC / 2;
+		 htim12.Instance->PSC = PSC;
+		 LCD_SetCursor(15,3);
+		 LCD_WriteString("Oitava: 5");
+	 }else{
+		 LCD_SetCursor(15,3);
+		 LCD_WriteString("Oitava: 4");
+	 }
+
+	 float freq = 84000000 / ((psc + 1) * (arr + 1)) * 2;
+
+	 char buffer[50];
+	 snprintf(buffer, sizeof(buffer), "Frequencia: %.2fHz\r\n", freq);
+	 HAL_UART_Transmit(&huart2, (uint8_t*)buffer, strlen(buffer), HAL_MAX_DELAY);
 	 HAL_Delay(250);
 	 LCD_Clear();
 
@@ -319,9 +368,9 @@ static void MX_TIM12_Init(void)
 
   /* USER CODE END TIM12_Init 1 */
   htim12.Instance = TIM12;
-  htim12.Init.Prescaler = 9999;
+  htim12.Init.Prescaler = 1;
   htim12.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim12.Init.Period = 1;
+  htim12.Init.Period = 9999;
   htim12.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim12.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim12) != HAL_OK)

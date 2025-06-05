@@ -67,7 +67,7 @@ void mpu6050_init(){
 
 }
 
-int mpu6050_read(){
+void mpu6050_read(int *yPos, int *xPos){
 
 	uint8_t dataX[2];
 	int16_t xAcc;
@@ -81,13 +81,7 @@ int mpu6050_read(){
 
 	yAcc = ((int16_t)dataY[0] << 8) + dataY[1] - 120;
 
-	char buffer[20];
-	sprintf(buffer, "Eixo X: %d;", xAcc);
-	LCD_WriteString(buffer);
-	sprintf(buffer, "Eixo Y: %d;", yAcc);
-	LCD_SetCursor(0, 2);
-	LCD_WriteString(buffer);
-
-	return xAcc;
+	*yPos = yAcc;
+	*xPos = xAcc;
 
 }
